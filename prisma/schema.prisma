@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database.db"
+}
+
+model Child {
+  id          Int      @id @default(autoincrement())
+  fullName    String
+  gender      String
+  parentName  String
+  phoneNumber String
+  birthDate   DateTime
+  address     String
+  nationality String
+  notes       String?
+  photo       String
+}
+
+model Request {
+  id          Int      @id @default(autoincrement())
+  name        String
+  familyName  String
+  gender      String
+  parentName  String
+  phoneNumber String
+  birthDate   DateTime
+}
+
+model Staff {
+  id          Int      @id @default(autoincrement())
+  fullName    String
+  role        String
+  workHours   String
+  workDays    String
+  phoneNumber String
+  email       String
+  startDate   DateTime
+  notes       String?
+  photo       String
+}
