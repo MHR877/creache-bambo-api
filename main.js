@@ -6,8 +6,10 @@ import path from "path";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const appExpress = express();
 appExpress.use(express.json());
 appExpress.use(cors());
@@ -39,9 +41,16 @@ appExpress.post("/upload", upload.single("image"), (req, res) => {
 
 import childrenRouter from "./api/children.js";
 import staffRouter from "./api/staff.js";
+import expenseRouter from "./api/expense.js";
+import paymentRouter from "./api/payment.js";
+import staffExpenseRouter from "./api/staffSalary.js";
 
 appExpress.use("/children", childrenRouter);
 appExpress.use("/staff", staffRouter);
+appExpress.use("/expense", expenseRouter);
+
+appExpress.use("/payment", paymentRouter);
+appExpress.use("/staff-salary", staffExpenseRouter);
 
 appExpress.post("/request", async (req, res) => {
   const { name, familyName, gender, parentName, phoneNumber, birthDate } =

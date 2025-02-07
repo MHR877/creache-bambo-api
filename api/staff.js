@@ -5,9 +5,33 @@ const prisma = new PrismaClient();
 const staffRouter = express.Router();
 
 // GET all staff
-staffRouter.get("/", async (req, res) => {
+staffRouter.get("/all", async (req, res) => {
   try {
     const staff = await prisma.staff.findMany();
+    res.json(staff);
+  } catch (error) {
+    console.error("Error fetching staff:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+staffRouter.get("/active", async (req, res) => {
+  try {
+    const staff = await prisma.staff.findMany({
+      where: { isArchived: false },
+    });
+    res.json(staff);
+  } catch (error) {
+    console.error("Error fetching staff:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+staffRouter.get("/archived", async (req, res) => {
+  try {
+    const staff = await prisma.staff.findMany({
+      where: { isArchived: true },
+    });
     res.json(staff);
   } catch (error) {
     console.error("Error fetching staff:", error);
@@ -38,13 +62,17 @@ staffRouter.post("/", async (req, res) => {
   const {
     fullName,
     role,
+    address,
     workHours,
     workDays,
+    emergencyContact,
     phoneNumber,
     email,
     startDate,
     notes,
     photo,
+    idCardNumber,
+    rib,
   } = req.body;
 
   try {
@@ -53,12 +81,16 @@ staffRouter.post("/", async (req, res) => {
         fullName,
         role,
         workHours,
+        emergencyContact,
         workDays,
+        address,
         phoneNumber,
         email,
         startDate: new Date(startDate),
         notes,
         photo,
+        idCardNumber,
+        rib,
       },
     });
     res.status(201).json(newStaff);
@@ -67,6 +99,7 @@ staffRouter.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 // PUT (update) an existing staff member
 staffRouter.put("/:id", async (req, res) => {
@@ -77,10 +110,14 @@ staffRouter.put("/:id", async (req, res) => {
     workHours,
     workDays,
     phoneNumber,
+    emergencyContact,
+    address,
     email,
     startDate,
     notes,
     photo,
+    idCardNumber,
+    rib,
   } = req.body;
 
   try {
@@ -88,14 +125,18 @@ staffRouter.put("/:id", async (req, res) => {
       where: { id: Number(id) },
       data: {
         fullName,
+        emergencyContact,
         role,
         workHours,
         workDays,
+        address,
         phoneNumber,
         email,
         startDate: new Date(startDate),
         notes,
         photo,
+        idCardNumber,
+        rib,
       },
     });
     res.json(updatedStaff);
@@ -109,13 +150,17 @@ staffRouter.put("/:id", async (req, res) => {
   }
 });
 
+
 // DELETE a staff member
 staffRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    await prisma.staff.delete({
+    await prisma.staff.update({
       where: { id: Number(id) },
+      data: {
+        isArchived: true,
+      },
     });
     res.status(204).send();
   } catch (error) {

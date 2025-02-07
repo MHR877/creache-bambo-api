@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,22 +8,26 @@ datasource db {
 }
 
 model Child {
-  id               Int       @id @default(autoincrement())
+  id               Int      @id @default(autoincrement())
   fullName         String
+  fatherName       String
+  motherName       String
+  motherFamilyName String
+  fatherFamilyName String
   gender           String
-  parentName       String
   phoneNumber      String
   birthDate        DateTime
   address          String
   nationality      String
   notes            String?
   photo            String
-  isPaid           Boolean   @default(false)
-  lastPaymentDate  DateTime?
-  paymentEndDate   DateTime?
-  price String?
-}
+  registrationDate DateTime @default(now())
+  medicalInfo      String?
+  guardianContact  String
+  isArchived       Boolean  @default(false) // Indicates if the child is archived
 
+  payments Payment[] // Relation to payments
+}
 
 model Request {
   id          Int      @id @default(autoincrement())
@@ -39,14 +40,59 @@ model Request {
 }
 
 model Staff {
+  id               Int      @id @default(autoincrement())
+  fullName         String
+  role             String
+  workHours        String
+  workDays         String
+  phoneNumber      String
+  email            String
+  address          String
+  emergencyContact String
+  startDate        DateTime
+  notes            String?
+  photo            String
+  isArchived       Boolean  @default(false) 
+
+  idCardNumber     String   @unique // National ID Card Number
+  rib             String   @unique  // Bank Account RIB for salary payments
+
+  payments Payment[] 
+  salaries StaffSalary[] 
+}
+
+
+model StaffSalary {
+  id      Int      @id @default(autoincrement())
+  staffId Int
+  staff   Staff    @relation(fields: [staffId], references: [id])
+  amount  Float
+  bonus   Float? // Bonus if applicable
+  date    DateTime @default(now())
+}
+
+model Payment {
+  id          Int       @id @default(autoincrement())
+  amount      Float
+  date        DateTime  @default(now())
+  paymentType String // "MonthlyFee", "Registration", etc.
+  status      String // "Paid" or "Pending"
+  startDate   DateTime? // Subscription start date
+  endDate     DateTime? // Subscription end date
+
+  childId Int?   @unique
+  child   Child? @relation(fields: [childId], references: [id])
+
+  staffId Int?   @unique
+  staff   Staff? @relation(fields: [staffId], references: [id])
+}
+
+model Expense {
   id          Int      @id @default(autoincrement())
-  fullName    String
-  role        String
-  workHours   String
-  workDays    String
-  phoneNumber String
-  email       String
-  startDate   DateTime
+  description String
+  amount      Float
+  date        DateTime @default(now())
+  category    String // Rent, Supplies, Food, Utilities, etc.
+  paidTo      String // The supplier or individual who was paid
   notes       String?
-  photo       String
 }
