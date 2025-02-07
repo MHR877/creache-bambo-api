@@ -11,17 +11,22 @@ datasource db {
 }
 
 model Child {
-  id          Int      @id @default(autoincrement())
-  fullName    String
-  gender      String
-  parentName  String
-  phoneNumber String
-  birthDate   DateTime
-  address     String
-  nationality String
-  notes       String?
-  photo       String
+  id               Int       @id @default(autoincrement())
+  fullName         String
+  gender           String
+  parentName       String
+  phoneNumber      String
+  birthDate        DateTime
+  address          String
+  nationality      String
+  notes            String?
+  photo            String
+  isPaid           Boolean   @default(false)
+  lastPaymentDate  DateTime?
+  paymentEndDate   DateTime?
+  price String?
 }
+
 
 model Request {
   id          Int      @id @default(autoincrement())
