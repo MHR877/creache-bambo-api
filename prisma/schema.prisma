@@ -80,10 +80,10 @@ model Payment {
   startDate   DateTime? // Subscription start date
   endDate     DateTime? // Subscription end date
 
-  childId Int?   @unique
+  childId Int?   
   child   Child? @relation(fields: [childId], references: [id])
 
-  staffId Int?   @unique
+  staffId Int?   
   staff   Staff? @relation(fields: [staffId], references: [id])
 }
 
